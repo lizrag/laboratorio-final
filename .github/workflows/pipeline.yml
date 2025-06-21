@@ -1,0 +1,13 @@
+name: Workflow
+on:
+    push:
+        branches:
+            - '**'
+    workflow_dispatch:
+
+jobs:
+    normaljob:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Iniciando el pipeline
+              run: echo "Inicio del pipeline"
