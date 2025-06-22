@@ -6,7 +6,7 @@ on:
     workflow_dispatch:
 
 jobs:
-    normaljob:
+    setup:
         runs-on: ubuntu-latest
         steps:
             - name: Iniciando el pipeline
@@ -17,3 +17,26 @@ jobs:
 
             - name: Instalar dependencias
               run: npm install
+    
+    sast:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Validando existencia de proyecto en sonarcloud
+              id: validateProjectOnSonar
+              run: |
+                set +e
+                response=$(curl -s -o /dev/null -w "%{http_code}" -X POST -u "${{ secrets.SONAR_TOKEN }}:" \
+                "https://sonarcloud.io/api/projects/create" \
+                -d "name=${{ github.event.repository.name }}" \
+                -d "project=${{ github.event.repository.name }}" \
+                -d "organization=${{ secrets.ORGANIZATION_SONAR }}" \
+                -d "visibility=public")
+
+                if [ "$response" -eq 200 ]; then    
+                echo "Proyecto creado exitosamente en SonarCloud"
+                echo "proyectoExiste=0" >> $GITHUB_OUTPUT
+                else
+                echo "Proyecto ya existente en SonarCloud o error al crear"
+                echo "proyectoExiste=1" >> $GITHUB_OUTPUT
+                fi
+                set -e
