@@ -22,12 +22,6 @@ jobs:
         runs-on: ubuntu-latest
         needs: setup
         steps:
-            - name: Verificar valores de configuración
-              run: |
-                echo "Project Key: ${{ secrets.PROJECT_KEY }}"
-                echo "Organization: ${{ secrets.ORGANIZATION_SONAR }}"
-
-
             - name: SonarScan
               uses: SonarSource/sonarqube-scan-action@v5
               env:
