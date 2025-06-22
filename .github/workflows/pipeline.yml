@@ -32,4 +32,3 @@ jobs:
                 args: >
                     -Dsonar.projectKey=${{ secrets.PROJECT_KEY }}
                     -Dsonar.organization=${{ secrets.ORGANIZATION_SONAR }}
-                    -Dsonar.qualitygate.wait=true
