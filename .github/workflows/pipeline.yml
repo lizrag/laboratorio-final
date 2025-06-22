@@ -33,10 +33,11 @@ jobs:
                 -d "visibility=public")
             
                 if [ "$response" -ne 200 ]; then
-                echo "Proyecto ya existente en SonarCloud o error al crear"
-                echo "::set-output name=proyectoExiste::1"
+                    echo "Proyecto ya existente en SonarCloud o error al crear"
+                    echo "proyectoExiste=1" >> $GITHUB_OUTPUT
                 else
-                echo "Proyecto creado exitosamente en SonarCloud"
+                    echo "Proyecto creado exitosamente en SonarCloud"
+                    echo "proyectoExiste=0" >> $GITHUB_OUTPUT
 
                 fi
                 set -e
