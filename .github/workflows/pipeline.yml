@@ -20,6 +20,7 @@ jobs:
     
     sast:
         runs-on: ubuntu-latest
+        needs: setup
         steps:
             - name: Validando existencia de proyecto en SonarCloud
               id: validateProjectOnSonar
@@ -41,3 +42,16 @@ jobs:
 
                 fi
                 set -e
+
+
+            - name: SonarScan
+              uses: SonarSource/sonarqube-scan-action@v5
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+              with:
+                projectBaseDir: .
+                args: >
+                    -Dsonar.projectKey=${{ secrets.PROJECT_KEY }}
+                    -Dsonar.organization=${{ secrets.ORGANIZATION_SONAR }}
+                    -Dsonar.qualitygate.wait=true
