@@ -11,3 +11,9 @@ jobs:
         steps:
             - name: Iniciando el pipeline
               run: echo "Inicio del pipeline"
+            
+            - name: Checkout del código
+              uses: actions/checkout@v3
+
+            - name: Instalar dependencias
+              run: npm install
