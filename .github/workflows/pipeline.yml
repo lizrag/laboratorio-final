@@ -21,8 +21,22 @@ jobs:
     sast:
         runs-on: ubuntu-latest
         steps:
-            - name: Setup SonarCloud
-              id: setupSonar
-              uses: nelsoncanarinho/setup-sonar@v1.0.0
-              with: 
-                SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+            - name: Validando existencia de proyecto en SonarCloud
+              id: validateProjectOnSonar
+              run: |
+                set +e
+                response=$(curl -s -o /dev/null -w "%{http_code}" -X POST -u "${{ secrets.SONAR_TOKEN }}:" \
+                "https://sonarcloud.io/api/projects/create" \
+                -d "name=${{ github.event.repository.name }}" \
+                -d "project=${{ github.event.repository.name }}" \
+                -d "organization=${{ secrets.ORGANIZATION_SONAR }}" \
+                -d "visibility=public")
+            
+                if [ "$response" -ne 200 ]; then
+                echo "Proyecto ya existente en SonarCloud o error al crear"
+                echo "::set-output name=proyectoExiste::1"
+                else
+                echo "Proyecto creado exitosamente en SonarCloud"
+
+                fi
+                set -e
