@@ -23,6 +23,6 @@ jobs:
         steps:
             - name: Setup SonarCloud
               id: setupSonar
-              uses: elsoncanarinho/setup-sonar@v1.0.0
+              uses: nelsoncanarinho/setup-sonar@v1.0.0
               with: 
                 SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
