@@ -32,3 +32,28 @@ jobs:
                 args: >
                     -Dsonar.projectKey=${{ secrets.PROJECT_KEY }}
                     -Dsonar.organization=${{ secrets.ORGANIZATION_SONAR }}
+
+            - name: Validando resultado de sonarcloud
+              run: |
+                idanalisis=$(curl -s -X GET -u '${{ secrets.SONAR_TOKEN }}:' 'https://sonarcloud.io/api/ce/component?component=${{ github.event.repository.name }}')
+                idanalisisParse=$(echo "$idanalisis" | jq .current.analysisId | sed -e 's/^"//' -e 's/"$//')
+                echo "ID del análisis: $idanalisisParse"
+                qualitygate=$(curl -s -X GET -u '${{ secrets.SONAR_TOKEN }}:' 'https://sonarcloud.io/api/qualitygates/project_status?analysisId=$idanalisisParse')
+                qualitygateStatus=$(echo "$qualitygate" | jq .projectStatus.status | sed -e 's/^"//' -e 's/"$//')
+                case $qualitygateStatus in
+                    *"OK"*)
+                        echo "Calidad del código: OK"
+                        ;;
+                    *"ERROR"*)
+                        echo "Calidad del código: ERROR"
+                        exit 1
+                        ;;
+                    *"WARN"*)
+                        echo "Calidad del código: WARN"
+                        exit 1
+                        ;;
+                    *"NONE"*)
+                        echo "Estado NONE: $qualitygateStatus"
+                        exit 1
+                        ;;
+                    esac
