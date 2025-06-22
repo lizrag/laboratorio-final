@@ -27,27 +27,6 @@ jobs:
                 echo "Project Key: ${{ secrets.PROJECT_KEY }}"
                 echo "Organization: ${{ secrets.ORGANIZATION_SONAR }}"
 
-            - name: Validando existencia de proyecto en SonarCloud
-              id: validateProjectOnSonar
-              run: |
-                set +e
-                response=$(curl -s -o /dev/null -w "%{http_code}" -X POST -u "${{ secrets.SONAR_TOKEN }}:" \
-                "https://sonarcloud.io/api/projects/create" \
-                -d "name=${{ github.event.repository.name }}" \
-                -d "project=${{ github.event.repository.name }}" \
-                -d "organization=${{ secrets.ORGANIZATION_SONAR }}" \
-                -d "visibility=public")
-            
-                if [ "$response" -ne 200 ]; then
-                    echo "Proyecto ya existente en SonarCloud o error al crear"
-                    echo "proyectoExiste=1" >> $GITHUB_OUTPUT
-                else
-                    echo "Proyecto creado en SonarCloud"
-                    echo "proyectoExiste=0" >> $GITHUB_OUTPUT
-
-                fi
-                set -e
-
 
             - name: SonarScan
               uses: SonarSource/sonarqube-scan-action@v5
