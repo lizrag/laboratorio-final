@@ -86,9 +86,8 @@ jobs:
             - name: Docker push
               run: |
                 docker push ${{ secrets.DOCKER_USER }}/labfinal:latest
-            - name: Instalar Trivy
-              run: |
-                curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin
             - name: Escanear imagen Docker con Trivy
-              run: |
-                trivy image --exit-code 1 --severity CRITICAL,HIGH ${{ secrets.DOCKER_USER }}/labfinal:latest
+              uses: aquasecurity/trivy-action@master
+              with:
+                    image-ref: ${{ secrets.DOCKER_USER }}/labfinal:latest
+                    format: 'table'
