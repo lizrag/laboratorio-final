@@ -96,7 +96,7 @@ jobs:
     
     DAST:
         runs-on: self-hosted
-        needs: DockerBuild
+        #needs: DockerBuild
         steps:
             - name: Despliegue app
               run: |
