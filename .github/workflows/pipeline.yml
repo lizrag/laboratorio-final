@@ -91,3 +91,5 @@ jobs:
               with:
                     image-ref: ${{ secrets.DOCKER_USER }}/labfinal:latest
                     format: 'table'
+                    exit-code: '1'
+                    severity: 'CRITICAL,HIGH,MEDIUM'
