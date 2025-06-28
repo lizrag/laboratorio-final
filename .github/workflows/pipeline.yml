@@ -98,6 +98,8 @@ jobs:
         runs-on: self-hosted
         #needs: DockerBuild
         steps:
+            - name: Cleanup contenedor anterior
+              run: docker rm -f lab-deploy || true
             - name: Despliegue application
               run: |
                 docker run -p 8085:8085 --name lab-deploy -d ${{ secrets.DOCKER_USER }}/labfinal:latest
