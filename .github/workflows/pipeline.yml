@@ -91,7 +91,7 @@ jobs:
             - name: Docker push
               run: |
                 docker push ${{ secrets.DOCKER_USER }}/labfinal:latest
-                
+
             - name: Escanear imagen Docker con Trivy
               uses: aquasecurity/trivy-action@master
               with:
@@ -102,7 +102,7 @@ jobs:
     
     DAST:
         runs-on: ubuntu-latest
-        needs: DockerBuild
+        #needs: DockerBuild
         steps:
             - name: Cleanup contenedor anterior
               run: docker rm -f lab-deploy || true
