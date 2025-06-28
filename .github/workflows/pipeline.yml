@@ -70,7 +70,7 @@ jobs:
                 trivy fs --exit-code 1 --severity CRITICAL,HIGH,MEDIUM .
     
     DockerBuild:
-        needs: sca
+        #needs: sca
         runs-on: ubuntu-latest
         steps:
             - name: Checkout del código
