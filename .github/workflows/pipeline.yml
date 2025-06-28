@@ -96,7 +96,7 @@ jobs:
     
     DAST:
         runs-on: ubuntu-latest
-        needs: DockerBuild
+        #needs: DockerBuild
         steps:
             - name: Cleanup contenedor anterior
               run: docker rm -f lab-deploy || true
