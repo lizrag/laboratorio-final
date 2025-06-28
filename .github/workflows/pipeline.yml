@@ -95,7 +95,7 @@ jobs:
                     severity: 'CRITICAL,HIGH,MEDIUM'
     
     DAST:
-        runs-on: [self-hosted, devops-vm]
+        runs-on: [self-hosted, Linux, ARM64]
         #needs: DockerBuild
         steps:
             - name: Cleanup contenedor anterior
