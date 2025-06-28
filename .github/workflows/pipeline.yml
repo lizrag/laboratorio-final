@@ -62,8 +62,10 @@ jobs:
         steps:
             - name: Checkout repository
               uses: actions/checkout@v4
+
             - name: Install dependencies
               run: npm ci
+
             - name: Escanear con Trivy
               run: |
                 curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin
@@ -75,17 +77,21 @@ jobs:
         steps:
             - name: Checkout del código
               uses: actions/checkout@v3
+
             - name: Build docker image
               run: |
                 docker build -t ${{ secrets.DOCKER_USER }}/labfinal:latest .
+
             - name: Docker Login
               uses: docker/login-action@v3.0.0
               with:
                   username: ${{ secrets.DOCKER_USER }}
                   password: ${{ secrets.DOCKER_PASSWORD }}
+
             - name: Docker push
               run: |
                 docker push ${{ secrets.DOCKER_USER }}/labfinal:latest
+                
             - name: Escanear imagen Docker con Trivy
               uses: aquasecurity/trivy-action@master
               with:
@@ -96,18 +102,26 @@ jobs:
     
     DAST:
         runs-on: ubuntu-latest
-        #needs: DockerBuild
+        needs: DockerBuild
         steps:
             - name: Cleanup contenedor anterior
               run: docker rm -f lab-deploy || true
-            - name: Crear red Docker
-              run: docker network create labnet || true
+
             - name: Despliegue application
               run: |
-                docker run --network labnet --name lab-deploy -d -p 8085:8085 ${{ secrets.DOCKER_USER }}/labfinal:latest
+                docker run -p 8085:8085 --name lab-deploy -d ${{ secrets.DOCKER_USER }}/labfinal:latest
+
+            - name: Verificar contenedores activos
+              run: docker ps
+
+            - name: Ver logs de la aplicación
+              run: docker logs lab-deploy
+
             - name: Sleep
-              run: sleep 30
+              run: sleep 60
+
             - name: OWASP ZAP Scan
               uses: zaproxy/action-baseline@v0.11.0
               with: 
-                target: 'http://lab-deploy:8085/'
+                target: 'http://localhost:8085/'
+
