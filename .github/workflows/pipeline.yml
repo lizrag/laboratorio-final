@@ -63,12 +63,15 @@ jobs:
                     curl -s -u '${{ secrets.SONAR_TOKEN }}:' \
                     "https://sonarcloud.io/api/issues/search?componentKeys=${{ github.event.repository.name }}&types=BUG,VULNERABILITY,CODE_SMELL&ps=500" \
                     > sonar_issues.json
-            
+
+            - name: Embellecer JSON de issues
+              run: jq '.' sonar_issues.json > sonar_issues_leg.json
+              
             - name: Subir issues de SonarCloud
               uses: actions/upload-artifact@v4
               with:
                     name: reporte_issues_sonarcloud
-                    path: sonar_issues.json
+                    path: sonar_issues_leg.json
     sca:
         runs-on: ubuntu-latest
         steps:
