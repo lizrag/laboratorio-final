@@ -38,28 +38,15 @@ jobs:
 
             - name: Validando resultado de sonarcloud
               run: |
-                idanalisis=$(curl -s -X GET -u '${{ secrets.SONAR_TOKEN }}:' 'https://sonarcloud.io/api/ce/component?component=${{ github.event.repository.name }}')
-                idanalisisParse=$(echo "$idanalisis" | jq .current.analysisId | sed -e 's/^"//' -e 's/"$//')
-                echo "ID del análisis: $idanalisisParse"
-                qualitygate=$(curl -s -X GET -u '${{ secrets.SONAR_TOKEN }}:' 'https://sonarcloud.io/api/qualitygates/project_status?analysisId=$idanalisisParse')
-                qualitygateStatus=$(echo "$qualitygate" | jq .projectStatus.status | sed -e 's/^"//' -e 's/"$//')
-                case $qualitygateStatus in
-                    *"OK"*)
-                        echo "Calidad del código: OK"
-                        ;;
-                    *"ERROR"*)
-                        echo "Calidad del código: ERROR"
-                        exit 1
-                        ;;
-                    *"WARN"*)
-                        echo "Calidad del código: WARN"
-                        exit 1
-                        ;;
-                    *"NONE"*)
-                        echo "Estado NONE: $qualitygateStatus"
-                        exit 1
-                        ;;
-                    esac
+                curl -s -u '${{ secrets.SONAR_TOKEN }}:' \
+                "https://sonarcloud.io/api/issues/search?componentKeys=${{ github.event.repository.name }}&types=VULNERABILITY&severities=MAJOR,CRITICAL,BLOCKER&ps=1" > sonar_vuln_check.json
+                count=$(jq '.total' sonar_vuln_check.json)
+                if [ "$count" -gt "0" ]; then
+                  echo "Se encontraron vulnerabilidades MAJOR, CRITICAL o BLOCKER en el código."
+                  exit 1
+                else
+                  echo "No se encontraron vulnerabilidades MAJOR, CRITICAL o BLOCKER."
+                fi
 
             - name: Descargar issues de SonarCloud
               run: |
