@@ -22,6 +22,8 @@ jobs:
         runs-on: ubuntu-latest
         needs: setup
         steps:
+            - name: Checkout del código
+              uses: actions/checkout@v3
             - name: SonarScan
               uses: SonarSource/sonarqube-scan-action@v5
               env:
@@ -32,7 +34,7 @@ jobs:
                 args: >
                     -Dsonar.projectKey=${{ secrets.PROJECT_KEY }}
                     -Dsonar.organization=${{ secrets.ORGANIZATION_SONAR }}
-                    -Dsonar.sources=src,functions/src
+                    -Dsonar.sources=.
 
             - name: Validando resultado de sonarcloud
               run: |
