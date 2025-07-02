@@ -57,6 +57,18 @@ jobs:
                         exit 1
                         ;;
                     esac
+
+            - name: Descargar issues de SonarCloud
+              run: |
+                    curl -s -u '${{ secrets.SONAR_TOKEN }}:' \
+                    "https://sonarcloud.io/api/issues/search?componentKeys=${{ github.event.repository.name }}&types=BUG,VULNERABILITY,CODE_SMELL&ps=500" \
+                    > sonar_issues.json
+            
+            - name: Subir issues de SonarCloud
+              uses: actions/upload-artifact@v4
+              with:
+                    name: reporte_issues_sonarcloud
+                    path: sonar_issues.json
     sca:
         runs-on: ubuntu-latest
         steps:
