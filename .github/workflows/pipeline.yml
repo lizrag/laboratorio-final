@@ -32,7 +32,7 @@ jobs:
                 args: >
                     -Dsonar.projectKey=${{ secrets.PROJECT_KEY }}
                     -Dsonar.organization=${{ secrets.ORGANIZATION_SONAR }}
-                    -Dsonar.sources=.
+                    -Dsonar.sources=src,functions/src
 
             - name: Validando resultado de sonarcloud
               run: |
